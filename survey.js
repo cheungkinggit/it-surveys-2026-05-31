@@ -231,6 +231,80 @@ function downloadCsv(type) {
   URL.revokeObjectURL(url);
 }
 
+function percent(value, total) {
+  if (!total) return "--";
+  return `${Math.round((value / total) * 100)}%`;
+}
+
+function renderBar(container, label, value, total, accent = "") {
+  const row = document.createElement("div");
+  row.className = "bar-row";
+  const width = total ? Math.round((value / total) * 100) : 0;
+  row.innerHTML = `
+    <div class="bar-meta">
+      <span>${label}</span>
+      <strong>${value}${total ? ` / ${total}` : ""}</strong>
+    </div>
+    <div class="bar-track">
+      <span class="bar-fill ${accent}" style="width: ${width}%"></span>
+    </div>
+  `;
+  container.appendChild(row);
+}
+
+function initResults() {
+  const studentStatsEl = document.querySelector("#studentStats");
+  const teacherStatsEl = document.querySelector("#teacherStats");
+  if (!studentStatsEl || !teacherStatsEl) return;
+
+  const studentResponses = Object.values(loadResponses("student"));
+  const teacherResponses = Object.values(loadResponses("teacher"));
+
+  document.querySelector("#studentSummary").textContent = `${studentResponses.length} / ${classes.length}`;
+  document.querySelector("#teacherSummary").textContent = `${teacherResponses.length} / ${teachers.length}`;
+  document.querySelector("#studentResponseCount").textContent = `${studentResponses.length} 份回應`;
+  document.querySelector("#teacherResponseCount").textContent = `${teacherResponses.length} 份回應`;
+
+  const totalStudents = studentResponses.reduce((sum, response) => sum + Number(response.studentCount || 0), 0);
+  const totalAgreed = studentResponses.reduce((sum, response) => {
+    return sum + response.answers.reduce((inner, answer) => inner + Number(answer || 0), 0);
+  }, 0);
+  const possibleStudentAnswers = totalStudents * studentQuestions.length;
+  document.querySelector("#studentAverage").textContent = percent(totalAgreed, possibleStudentAnswers);
+
+  const positiveChoices = new Set(["十分同意", "同意"]);
+  const teacherPositiveCount = teacherResponses.reduce((sum, response) => {
+    return sum + response.answers.filter((answer) => positiveChoices.has(answer)).length;
+  }, 0);
+  const possibleTeacherAnswers = teacherResponses.length * teacherQuestions.length;
+  document.querySelector("#teacherPositive").textContent = percent(teacherPositiveCount, possibleTeacherAnswers);
+
+  studentStatsEl.innerHTML = "";
+  studentQuestions.forEach((question, index) => {
+    const agreed = studentResponses.reduce((sum, response) => sum + Number(response.answers[index] || 0), 0);
+    const card = document.createElement("section");
+    card.className = "stat-block";
+    card.innerHTML = `
+      <h3>${question}</h3>
+      <p>${totalStudents ? `平均認同率 ${percent(agreed, totalStudents)}` : "暫未有學生回應"}</p>
+    `;
+    renderBar(card, "認同學生人數", agreed, totalStudents, "student-fill");
+    studentStatsEl.appendChild(card);
+  });
+
+  teacherStatsEl.innerHTML = "";
+  teacherQuestions.forEach((question, index) => {
+    const card = document.createElement("section");
+    card.className = "stat-block";
+    card.innerHTML = `<h3>${question.text}</h3><p>${teacherResponses.length ? "選項分佈" : "暫未有教師回應"}</p>`;
+    question.choices.forEach((choice) => {
+      const count = teacherResponses.filter((response) => response.answers[index] === choice).length;
+      renderBar(card, choice, count, teacherResponses.length, positiveChoices.has(choice) ? "teacher-fill" : "");
+    });
+    teacherStatsEl.appendChild(card);
+  });
+}
+
 function bindUtilities() {
   document.querySelectorAll("[data-export]").forEach((button) => {
     button.addEventListener("click", () => downloadCsv(button.dataset.export));
@@ -249,4 +323,5 @@ function bindUtilities() {
 
 initStudent();
 initTeacher();
+initResults();
 bindUtilities();
