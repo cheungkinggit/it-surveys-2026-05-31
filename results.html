@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>資訊科技組 問卷結果</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="survey result-theme">
+    <main class="survey-shell">
+      <section class="survey-intro results-intro">
+        <p class="eyebrow">統計中心</p>
+        <h1>問卷結果</h1>
+        <p>集中查看學生問卷及教師問卷完成情況、題目統計，並匯出 CSV 作整理。</p>
+        <div class="result-actions">
+          <button class="ghost-button" data-export="student">匯出學生問卷 CSV</button>
+          <button class="ghost-button" data-export="teacher">匯出教師問卷 CSV</button>
+        </div>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span class="summary-icon">S</span>
+          <p>學生問卷完成</p>
+          <strong id="studentSummary">0 / 30</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-icon">T</span>
+          <p>教師問卷完成</p>
+          <strong id="teacherSummary">0 / 55</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-icon">%</span>
+          <p>學生平均認同率</p>
+          <strong id="studentAverage">--</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-icon">A</span>
+          <p>教師正向回應率</p>
+          <strong id="teacherPositive">--</strong>
+        </article>
+      </section>
+
+      <section class="results-grid">
+        <article class="result-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">學生問卷</p>
+              <h2>各題認同人數統計</h2>
+            </div>
+            <span id="studentResponseCount" class="mini-badge"></span>
+          </div>
+          <div id="studentStats" class="stat-list"></div>
+        </article>
+
+        <article class="result-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">教師問卷</p>
+              <h2>各題選項分佈</h2>
+            </div>
+            <span id="teacherResponseCount" class="mini-badge"></span>
+          </div>
+          <div id="teacherStats" class="stat-list"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="survey.js"></script>
+  </body>
+</html>
