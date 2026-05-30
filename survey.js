@@ -49,6 +49,10 @@ const teacherQuestions = [
   {
     text: "5. 我認為自己能應用A.I.在行政工作上。",
     choices: ["十分同意", "同意", "不同意", "十分不同意"]
+  },
+  {
+    text: "6. 我認為自己能應用A.I.在教學工作上。",
+    choices: ["十分同意", "同意", "不同意", "十分不同意"]
   }
 ];
 
@@ -202,7 +206,7 @@ function initTeacher() {
   });
 }
 
-function downloadCsv(type) {
+function downloadXls(type) {
   const responses = Object.values(loadResponses(type));
   if (responses.length === 0) {
     alert("暫時沒有提交紀錄可匯出。");
@@ -219,14 +223,29 @@ function downloadCsv(type) {
       : [response.teacherName, ...response.answers, response.submittedAt];
   });
 
-  const csv = [headers, ...rows]
-    .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(","))
-    .join("\n");
-  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+  const escapeHtml = (value) => String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+  const table = `
+    <html>
+      <head><meta charset="utf-8"></head>
+      <body>
+        <table border="1">
+          <thead><tr>${headers.map((cell) => `<th>${escapeHtml(cell)}</th>`).join("")}</tr></thead>
+          <tbody>
+            ${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `;
+  const blob = new Blob(["\ufeff" + table], { type: "application/vnd.ms-excel;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${type}-survey-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.download = `${type}-survey-${new Date().toISOString().slice(0, 10)}.xls`;
   link.click();
   URL.revokeObjectURL(url);
 }
@@ -307,7 +326,17 @@ function initResults() {
 
 function bindUtilities() {
   document.querySelectorAll("[data-export]").forEach((button) => {
-    button.addEventListener("click", () => downloadCsv(button.dataset.export));
+    button.addEventListener("click", () => downloadXls(button.dataset.export));
+  });
+
+  document.querySelectorAll("[data-reset-all]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const confirmed = confirm("確定要重設問卷？這會清除這部電腦/瀏覽器內的學生及教師問卷紀錄。");
+      if (!confirmed) return;
+      localStorage.removeItem(storage.student);
+      localStorage.removeItem(storage.teacher);
+      location.reload();
+    });
   });
 
   document.querySelectorAll("[data-reset]").forEach((button) => {
