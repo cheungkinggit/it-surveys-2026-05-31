@@ -371,6 +371,11 @@ button[type="submit"] {
   color: var(--ink);
 }
 
+.danger-button {
+  border-color: rgba(217, 45, 32, 0.28);
+  color: #b42318;
+}
+
 .message {
   min-height: 28px;
   margin: 16px 0 0;
