@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>資訊科技組 學生問卷</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="survey student-theme">
+    <header class="topbar">
+      <a href="index.html">問卷首頁</a>
+      <button class="ghost-button" data-export="student">匯出 CSV</button>
+    </header>
+
+    <main class="survey-shell">
+      <section class="survey-intro">
+        <p class="eyebrow">問卷 1</p>
+        <h1>資訊科技組 學生問卷</h1>
+        <p>請老師先選擇班別及輸入當天實際上課人數，再按每題表示認同的學生人數作答。</p>
+      </section>
+
+      <section class="status-board">
+        <div>
+          <h2>未完成班別</h2>
+          <p id="studentProgress" class="progress-text"></p>
+        </div>
+        <div id="studentPending" class="chip-grid"></div>
+      </section>
+
+      <form id="studentForm" class="form-panel">
+        <label>
+          班別
+          <select id="studentClass" required></select>
+        </label>
+
+        <label>
+          當天實際上課人數
+          <input id="studentCount" type="number" min="1" max="45" required placeholder="請輸入學生人數">
+        </label>
+
+        <div id="studentQuestions" class="question-stack"></div>
+
+        <div class="form-actions">
+          <button type="submit">提交學生問卷</button>
+          <button type="button" class="secondary-button" data-reset="student">清除本機學生紀錄</button>
+        </div>
+        <p id="studentMessage" class="message" role="status"></p>
+      </form>
+    </main>
+
+    <script src="survey.js"></script>
+  </body>
+</html>
