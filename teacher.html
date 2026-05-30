@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>資訊科技組 教師問卷</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="survey teacher-theme">
+    <header class="topbar">
+      <a href="index.html">問卷首頁</a>
+      <button class="ghost-button" data-export="teacher">匯出 CSV</button>
+    </header>
+
+    <main class="survey-shell">
+      <section class="survey-intro">
+        <p class="eyebrow">問卷 2</p>
+        <h1>資訊科技組 教師問卷</h1>
+        <p>請選擇老師姓名，然後完成以下問題。首頁會即時顯示仍未完成的老師姓名。</p>
+      </section>
+
+      <section class="status-board">
+        <div>
+          <h2>未完成老師</h2>
+          <p id="teacherProgress" class="progress-text"></p>
+        </div>
+        <div id="teacherPending" class="chip-grid"></div>
+      </section>
+
+      <form id="teacherForm" class="form-panel">
+        <label>
+          老師姓名
+          <select id="teacherName" required></select>
+        </label>
+
+        <div id="teacherQuestions" class="question-stack"></div>
+
+        <div class="form-actions">
+          <button type="submit">提交教師問卷</button>
+          <button type="button" class="secondary-button" data-reset="teacher">清除本機教師紀錄</button>
+        </div>
+        <p id="teacherMessage" class="message" role="status"></p>
+      </form>
+    </main>
+
+    <script src="survey.js"></script>
+  </body>
+</html>
